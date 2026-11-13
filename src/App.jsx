@@ -2,32 +2,59 @@ import React, { useState } from 'react';
 import HeaderClase from './components/HeaderClase';
 import EvaluacionForm from './components/EvaluacionForm';
 import { CheckCircle2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-// Tarjeta simplificada y robusta integrada directamente
+// Tarjeta con efecto 3D (Flip Card)
 function TarjetaClase({ numero, titulo, duracion, imagenUrl }) {
-  const [visto, setVisto] = useState(false);
+  const [volteada, setVolteada] = useState(false);
   
   return (
     <div 
-      onClick={() => setVisto(!visto)}
-      className="bg-slate-800 rounded-xl overflow-hidden cursor-pointer shadow-lg border border-slate-700 hover:border-cyan-500 transition-all"
+      onClick={() => setVolteada(!volteada)}
+      className="w-full h-56 cursor-pointer relative"
+      style={{ perspective: "1000px" }}
     >
-      <img 
-        src={imagenUrl} 
-        alt={titulo} 
-        className={`w-full h-40 object-cover transition-opacity ${visto ? 'opacity-30' : 'opacity-90'}`} 
-      />
-      <div className="p-4 text-center">
-        <h3 className={`font-bold mb-2 ${visto ? 'text-slate-400 line-through' : 'text-white'}`}>
-          {titulo}
-        </h3>
-        <div className="flex items-center justify-center gap-2 text-sm">
-          {visto && <CheckCircle2 size={16} className="text-emerald-500" />}
-          <span className={visto ? 'text-emerald-500' : 'text-cyan-400'}>
-            {visto ? 'Clase Completada' : `Semana ${numero} • ${duracion}`}
-          </span>
+      <motion.div
+        animate={{ rotateY: volteada ? 180 : 0 }}
+        transition={{ duration: 0.6 }}
+        style={{ transformStyle: "preserve-3d" }}
+        className="w-full h-full relative"
+      >
+        {/* --- LADO FRONTAL --- */}
+        <div 
+          style={{ backfaceVisibility: "hidden" }} 
+          className="absolute w-full h-full bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700 hover:border-cyan-500 transition-colors"
+        >
+          <img 
+            src={imagenUrl} 
+            alt={titulo} 
+            className="w-full h-32 object-cover" 
+          />
+          <div className="p-3 text-center">
+            <h3 className="font-bold text-white mb-1">
+              {titulo}
+            </h3>
+            <span className="text-cyan-400 text-sm font-medium">
+              Semana {numero} • {duracion}
+            </span>
+          </div>
         </div>
-      </div>
+
+        {/* --- LADO TRASERO --- */}
+        <div 
+          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }} 
+          className="absolute w-full h-full bg-slate-800 rounded-xl p-4 shadow-lg border border-cyan-500 flex flex-col justify-center items-center text-center"
+        >
+          <h3 className="font-bold text-white mb-2">Área de Actividades</h3>
+          <p className="text-slate-300 text-sm mb-4">
+            Próximamente: Enlaces a cuestionarios y dinámicas.
+          </p>
+          <div className="flex items-center gap-1 text-emerald-400 text-sm font-bold">
+            <CheckCircle2 size={16} />
+            <span>Módulo Listo</span>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -40,7 +67,7 @@ function App() {
       <main className="max-w-5xl mx-auto px-4 py-10">
         <div className="text-center mb-8 border-b border-slate-700 pb-4">
           <h2 className="text-3xl font-bold text-white">Contenido del Bimestre</h2>
-          <p className="text-slate-400 mt-2">Haz clic en las clases para marcarlas como vistas</p>
+          <p className="text-slate-400 mt-2">Haz clic en las tarjetas para ver las actividades</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -76,7 +103,7 @@ function App() {
       </main>
 
       <footer className="text-center py-8 mt-12 border-t border-slate-800 text-slate-400 text-sm">
-        <p>Plan de Clase Digital • Programación de Aplicaciones Web • Universidad Rafael Landivar</p>
+        <p>Plan de Clase Digital • Programación de Aplicaciones Web • Universidad Rafael Landívar</p>
         <p className="mt-1 font-medium text-slate-300">Desarrollado por Edin Wilfredo Zacarías Sierra Cahueque</p>
         <p className="mt-1">© 2026 Todos los derechos reservados</p>
       </footer>
